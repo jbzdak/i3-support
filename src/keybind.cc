@@ -12,32 +12,6 @@ std::ostream& operator<< (std::ostream& ostream, const JB::KeyPressInfo& kpinfo)
 
 namespace JB {
 
-void test_bindkeys() {
-  Window root;
-  XEvent e;
-  Display *dpy = XOpenDisplay(0);
-  if (!dpy)return;
-  root = DefaultRootWindow(dpy);
-
-  uint32_t F1 = XKeysymToKeycode(dpy, XStringToKeysym("F12"));
-
-  auto res = XGrabKey(dpy, F1, Mod1Mask | ShiftMask, root, False, GrabModeAsync, GrabModeAsync);
-
-  for (; ;) {
-    XNextEvent(dpy, &e);
-    if (e.type == KeyPress) {
-      if (e.xkey.keycode == F1) {
-        std::cout << "Foo";
-        break;
-      }
-    }
-  }
-
-  XUngrabKey(dpy, F1, 0, root);
-}
-
-
-
 class ButtonImpl{
 private:
   unsigned long modifiers;

@@ -7,8 +7,6 @@ namespace JB {
 
 class KBImpl;
 
-void test_bindkeys();
-
 struct Callback {
   virtual ~Callback(){};
   virtual void operator()() = 0;
@@ -40,7 +38,6 @@ private:
   KeyBinder();
   ~KeyBinder();
 public:
-
 
   void Bind(KeyPressInfo kpinfo, std::unique_ptr<Callback> cb);
 
