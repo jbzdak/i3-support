@@ -5,6 +5,11 @@
 #include <cstdint>
 #include <map>
 
+std::ostream& operator<< (std::ostream& ostream, const JB::KeyPressInfo& kpinfo){
+  ostream << "KeyPress(" << kpinfo.key << ", " << kpinfo.modifiers << ");";
+  return ostream;
+}
+
 namespace JB {
 
 void test_bindkeys() {
@@ -31,6 +36,8 @@ void test_bindkeys() {
   XUngrabKey(dpy, F1, 0, root);
 }
 
+
+
 class ButtonImpl{
 private:
   unsigned long modifiers;
@@ -39,8 +46,16 @@ private:
 public:
   ButtonImpl():
     ButtonImpl(0, 0){};
+
   ButtonImpl(unsigned long modifiers, unsigned long keycode):
     modifiers(modifiers), keycode(keycode){};
+
+  static ButtonImpl from_keyevent(const XEvent& e){
+    return ButtonImpl(
+      e.xkey.state,
+      e.xkey.keycode
+    );
+  }
 
   static ButtonImpl from_display(const KeyPressInfo& kpinfo, Display* disp){
     unsigned long keycode =  XKeysymToKeycode(disp, XStringToKeysym(kpinfo.key.c_str()));
@@ -67,7 +82,7 @@ class KBImpl {
   std::map<ButtonImpl, std::unique_ptr<Callback>> cb_map;
   Display * display;
   const Window root_window;
-  KeyPressInfo exit_on;
+  ButtonImpl exit_on;
 
   static Display* OpenDisplay(){
     Display* res =  XOpenDisplay(0);
@@ -94,15 +109,22 @@ public:
   }
 
   void exit_on_key(KeyPressInfo kbinfo){
-    exit_on = kbinfo;
+    exit_on = ButtonImpl::from_display(kbinfo, display);
   }
 
   void scan_for_keys_in_local_thread(){
     XEvent e;
     for(;;) {
       XNextEvent(display, &e);
-//      KeyPressInfo kpinfo = {e.xkey.keycode, e.xkey.state};
+      ButtonImpl button = ButtonImpl::from_keyevent(e);
 
+      // TODO: Handle Events registered for ModifierAny
+      // TODO: Ungrab all keys
+      cb_map[button]->operator()();
+
+      if(button == exit_on){
+        return;
+      }
     }
   }
 };
@@ -114,13 +136,25 @@ KeyBinder::KeyBinder() :
 KeyBinder::~KeyBinder() {
 }
 
-KeyBinder &KeyBinder::get() {
+KeyBinder& KeyBinder::Get() {
   static KeyBinder kb;
   return kb;
 }
 
-void KeyBinder::bind(KeyPressInfo kbinfo, std::unique_ptr<Callback> cb) {
+void KeyBinder::Bind(KeyPressInfo kbinfo, std::unique_ptr<Callback> cb) {
   internal->bind(kbinfo, std::move(cb));
+}
+
+void KeyBinder::ExitOn(KeyPressInfo kpinfo) {
+  internal->exit_on_key(kpinfo);
+}
+
+void KeyBinder::Run(bool async) {
+  internal->scan_for_keys_in_local_thread();
+}
+
+void PrintKeyPressCallback::operator()(){
+  std::cout << "Key pressed" << this->kpinfo << std::endl;
 }
 
 }
