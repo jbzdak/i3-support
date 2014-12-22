@@ -5,7 +5,7 @@ project(i3_support_clion)
 # set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5Widgets)
+# find_package(Qt5Widgets)
 
 file(GLOB SRCFILES "src/*.cc")
 
