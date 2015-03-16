@@ -6,63 +6,49 @@
 #define _PA_CONTROL_MAINLOOP_H_
 
 #include <pulse/pulseaudio.h>
-#include <bits/unique_ptr.h>
+#include <memory>
+#include <boost/optional.hpp>
 #include <functional>
+
+
+#include "MainLoopDetail.hxx"
 
 
 namespace jb {
 namespace pa {
 
-namespace MainLoopDetail{
-
-class DeletePaMainLoop{
-public:
-
-  void operator()(pa_mainloop* ml){
-    pa_mainloop_free(ml);
-  }
-};
-
-class DeletePaContext{
-public:
-
-  void operator()(pa_context* ctx){
-    pa_context_disconnect(ctx);
-    pa_context_unref(ctx);
-  }
-
-};
-
-}
-
 class MainLoop {
 
 public:
 
-  MainLoop(std::string context_name):
-    context_name(context_name),
-    pa_ml(pa_mainloop_new()),
-    pa_mlapi(pa_mainloop_get_api(
-      pa_ml.get())
-    ),
-    pa_ctx(pa_context_new(pa_mlapi.get(), this->context_name.c_str())){
+  MainLoop(std::string context_name);
 
-  }
+  void connect(
+    bool wait_for_connection=false,
+    boost::optional<std::string> server = boost::optional<std::string>(),
+    pa_context_flags_t flags= PA_CONTEXT_NOFLAGS
+  );
+
+  void run_loop_iteration(bool block=false);
+
+  pa_context_state_t get_context_state(){return context_state;}
 
 private:
+  friend void MainLoopDetail::main_loop_state_callback(pa_context *, void *);
+  void set_contenxt_state(pa_context_state_t state);
 
-
+private:
+//  const boost::optional<std::string> server_name;
   const std::string context_name;
   pa_context_state_t context_state;
+  const std::unique_ptr<pa_mainloop, MainLoopDetail::DeletePaMainLoop> pa_ml;
+  pa_mainloop_api* pa_mlapi; // No need to free this one, as per PA docs
+  const std::unique_ptr<pa_context, MainLoopDetail::DeletePaContext> pa_ctx;
 
-  /**
-  *
-  */
-  std::unique_ptr<pa_mainloop, MainLoopDetail::DeletePaMainLoop> pa_ml;
-  std::unique_ptr<pa_mainloop_api> pa_mlapi;
-  std::unique_ptr<pa_context, MainLoopDetail::DeletePaContext> pa_ctx;
 
 };
+
+
 
 }}
 
