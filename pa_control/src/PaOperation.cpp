@@ -9,7 +9,7 @@ namespace pa {
 
 
 void PaOperation::execute_operation(MainLoop& ml){
-  internal_operation = execute_operation_internal(ml.pa_ml.get());
+  internal_operation = execute_operation_internal(ml.pa_ctx.get());
   state = OperationState::PENDING;
 }
 

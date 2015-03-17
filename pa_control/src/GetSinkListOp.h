@@ -7,10 +7,24 @@
 
 #include "PaOperation.h"
 
+#include <vector>
+
 namespace jb {
 namespace pa {
 
 struct PaSink{
+
+  PaSink(pa_sink_info& info);
+
+  const std::string name, description;
+  const uint32_t index;
+  const bool muted;
+
+  const pa_volume_t volume;
+  const pa_sink_state_t state;
+  const uint32_t n_volume_steps;
+
+
 
 };
 

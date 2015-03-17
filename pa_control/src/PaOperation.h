@@ -27,7 +27,7 @@ public:
   virtual OperationState get_state() {return state;}
 
 protected:
-  virtual pa_operation *execute_operation_internal(pa_mainloop *) = 0;
+  virtual pa_operation *execute_operation_internal(pa_context *ctx) = 0;
 
   void get_result_guard();
 
