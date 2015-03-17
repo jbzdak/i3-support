@@ -19,10 +19,10 @@ enum class OperationState {
   DONE
 };
 
-class IPaOperation{
+class PaOperation {
 public:
   friend class MainLoop;
-  virtual ~IPaOperation();
+  virtual ~PaOperation();
   virtual void execute_operation(MainLoop& ml)=0;
   virtual OperationState get_state()=0;
 

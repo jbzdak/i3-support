@@ -17,11 +17,11 @@
 namespace jb {
 namespace pa {
 
-class IPaOperation;
+class PaOperation;
 
 class MainLoop {
 
-  friend class IPaOperation;
+  friend class PaOperation;
 
 public:
 
