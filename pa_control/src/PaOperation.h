@@ -23,11 +23,11 @@ class PaOperation {
 public:
   friend class MainLoop;
   virtual ~PaOperation();
-  virtual void execute_operation(MainLoop& ml)=0;
-  virtual OperationState get_state()=0;
+  virtual void execute_operation(MainLoop& ml);
+  virtual OperationState get_state() {return state;}
 
 protected:
-  virtual pa_operation *execute_operation_internal (pa_mainloop *) = 0;
+  virtual pa_operation *execute_operation_internal(pa_mainloop *) = 0;
 
   void get_result_guard();
 
