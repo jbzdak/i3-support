@@ -31,7 +31,8 @@ BOOST_AUTO_TEST_CASE(TestConnectionSync) {
 BOOST_AUTO_TEST_CASE(TestConnectionAsync) {
     jb::pa::MainLoop ml("foo");
     ml.connect(false);
-    // This might be testing a rece condition --- but I thing that
+    // This might be testing a race condition --- but I thing that
+    // we will never be able to connect that fast.
     BOOST_CHECK(ml.get_context_state() < PA_CONTEXT_READY);
 }
 

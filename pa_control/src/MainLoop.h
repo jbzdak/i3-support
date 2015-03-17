@@ -17,7 +17,11 @@
 namespace jb {
 namespace pa {
 
+class IPaOperation;
+
 class MainLoop {
+
+  friend class IPaOperation;
 
 public:
 
@@ -38,7 +42,7 @@ private:
   void set_contenxt_state(pa_context_state_t state);
 
 private:
-//  const boost::optional<std::string> server_name;
+
   const std::string context_name;
   pa_context_state_t context_state;
   const std::unique_ptr<pa_mainloop, MainLoopDetail::DeletePaMainLoop> pa_ml;

@@ -12,18 +12,19 @@ namespace jb {
 namespace pa {
 
 class pa_exception : public std::runtime_error {
-
 public:
   pa_exception(std::string const &__arg) : runtime_error(__arg) {
   }
-
 };
 
 class pa_no_connection : public pa_exception {
-
-
 public:
   pa_no_connection(std::string const &__arg) : pa_exception(__arg){};
+};
+
+class pa_operation_pending : public pa_exception {
+public:
+  pa_operation_pending(std::string const &__arg) : pa_exception(__arg){};
 };
 
 }}

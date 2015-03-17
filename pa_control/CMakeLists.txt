@@ -13,6 +13,6 @@ SET_TARGET_PROPERTIES(boost_unit_test_framework PROPERTIES
 
 add_executable(pa-orig-example ${SOURCE_FILES} main.cpp)
 
-add_executable(pa-test ${SOURCE_FILES} tests.cpp)
+add_executable(pa-test ${SOURCE_FILES} tests.cpp src/PaOperation.cpp src/PaOperation.h)
 
 target_link_libraries(pa-test boost_unit_test_framework)
