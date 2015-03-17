@@ -3,6 +3,10 @@
 #include <boost/test/unit_test.hpp>
 
 #include "src/MainLoop.h"
+#include "src/GetSinkListOp.h"
+
+
+using namespace jb::pa;
 
 BOOST_AUTO_TEST_SUITE(ExampleSuite)
 
@@ -36,6 +40,17 @@ BOOST_AUTO_TEST_CASE(TestConnectionAsync) {
     BOOST_CHECK(ml.get_context_state() < PA_CONTEXT_READY);
 }
 
+BOOST_AUTO_TEST_CASE(TestGetSinkList) {
+    jb::pa::MainLoop ml("foo");
+    ml.connect(true);
+    BOOST_CHECK(ml.get_context_state() == PA_CONTEXT_READY);
+    auto sink_op = std::make_shared<GetSinkListOp>();
+    ml.schedule_operation(sink_op);
+    ml.wait_for_all_pending_operations();
+    auto sinks = sink_op->get_sink_list();
+    BOOST_CHECK(sinks.size() > 0);
+
+}
 
 
 BOOST_AUTO_TEST_SUITE_END()

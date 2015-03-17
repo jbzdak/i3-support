@@ -101,9 +101,9 @@ void MainLoop::set_contenxt_state(pa_context_state_t state){
   this->context_state = state;
 }
 
-void MainLoop::schedule_operation(std::unique_ptr<PaOperation> operation) {
+void MainLoop::schedule_operation(std::shared_ptr<PaOperation> operation) {
   PaOperation* ptr = operation.get();
-  operations.insert(std::move(operation));
+  operations.insert(operation);
   ptr->execute_operation(this);
 
 }

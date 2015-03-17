@@ -1,2 +1,2 @@
 
-1. Unfinished work i MainLoop --- check whether it actually works,
+1. Check whether GetSinkList actually returns all sinks (and check returned values).

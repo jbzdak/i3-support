@@ -15,11 +15,11 @@ namespace pa {
 class PaSink{
 private:
 
-  MainLoop& ml;
+  MainLoop* ml;
 
 public:
 
-  PaSink(MainLoop &ml, const pa_sink_info& info);
+  PaSink(MainLoop *ml, const pa_sink_info& info);
 
 public:
 

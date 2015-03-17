@@ -38,7 +38,7 @@ public:
 
   pa_context_state_t get_context_state(){return context_state;}
 
-  void schedule_operation(std::unique_ptr<PaOperation> operation);
+  void schedule_operation(std::shared_ptr<PaOperation> operation);
 
   void wait_for_all_pending_operations();
 
