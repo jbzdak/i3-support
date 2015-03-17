@@ -12,9 +12,16 @@
 namespace jb {
 namespace pa {
 
-struct PaSink{
+class PaSink{
+private:
 
-  PaSink(pa_sink_info& info);
+  MainLoop& ml;
+
+public:
+
+  PaSink(MainLoop &ml, const pa_sink_info& info);
+
+public:
 
   const std::string name, description;
   const uint32_t index;
@@ -22,17 +29,20 @@ struct PaSink{
 
   const pa_volume_t volume;
   const pa_sink_state_t state;
-  const uint32_t n_volume_steps;
-
-
+  const uint32_t volume_steps;
 
 };
 
 class GetSinkListOp : public PaOperation{
 public:
 
+  std::vector<PaSink> get_sink_list(){
+    get_result_guard();
+    return sink_list;
+  }
+
 protected:
-  virtual pa_operation *execute_operation_internal(pa_context *mainloop);
+  virtual pa_operation *execute_operation_internal(pa_context *mainloop, MainLoop* ml);
 
 private:
   std::vector<PaSink> sink_list;

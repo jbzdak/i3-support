@@ -3,14 +3,14 @@
 //
 
 #include "PaOperation.h"
+#include "MainLoop.h"
 
 namespace jb {
 namespace pa {
 
-
-void PaOperation::execute_operation(MainLoop& ml){
-  internal_operation = execute_operation_internal(ml.pa_ctx.get());
-  state = OperationState::PENDING;
+void PaOperation::execute_operation(MainLoop* ml){
+  internal_operation = execute_operation_internal(ml->pa_ctx.get(), ml);
+  set_state(OperationState::PENDING);
 }
 
 PaOperation::~PaOperation() {
@@ -30,7 +30,22 @@ void PaOperation::ping_state(){
     if(pa_operation_get_state(*internal_operation) == PA_OPERATION_DONE){
       pa_operation_unref(*internal_operation);
       internal_operation.reset();
+      set_state(OperationState::DONE);
     }
+  }
+}
+
+void PaOperation::add_callback(std::unique_ptr<std::function<void(PaOperation*)>> cb) {
+  this->callbacks.push_back(std::move(cb));
+}
+
+void PaOperation::set_state(OperationState state) {
+  if (this->state == state){
+    return;
+  }
+  this->state = state;
+  for(auto& cb: callbacks){
+    cb->operator()(this);
   }
 }
 }}

@@ -9,10 +9,11 @@
 #include <memory>
 #include <boost/optional.hpp>
 #include <functional>
+#include <set>
 
 
 #include "MainLoopDetail.hxx"
-
+#include "PaOperation.h"
 
 namespace jb {
 namespace pa {
@@ -37,9 +38,9 @@ public:
 
   pa_context_state_t get_context_state(){return context_state;}
 
-private:
-  friend void MainLoopDetail::main_loop_state_callback(pa_context *, void *);
-  void set_contenxt_state(pa_context_state_t state);
+  void schedule_operation(std::unique_ptr<PaOperation> operation);
+
+  void wait_for_all_pending_operations();
 
 private:
 
@@ -48,6 +49,12 @@ private:
   const std::unique_ptr<pa_mainloop, MainLoopDetail::DeletePaMainLoop> pa_ml;
   pa_mainloop_api* pa_mlapi; // No need to free this one, as per PA docs
   const std::unique_ptr<pa_context, MainLoopDetail::DeletePaContext> pa_ctx;
+  std::set<std::shared_ptr<PaOperation>> operations;
+
+private:
+  friend void MainLoopDetail::main_loop_state_callback(pa_context *, void *);
+  void set_contenxt_state(pa_context_state_t state);
+  void update_operations();
 
 
 };
