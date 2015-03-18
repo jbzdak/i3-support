@@ -8,6 +8,7 @@
 #include "PaOperation.h"
 
 #include <vector>
+#include <iostream>
 
 namespace jb {
 namespace pa {
@@ -15,13 +16,13 @@ namespace pa {
 class PaSink{
 private:
 
-  MainLoop* ml;
+public:
+
+  PaSink(const pa_sink_info& info);
 
 public:
 
-  PaSink(MainLoop *ml, const pa_sink_info& info);
-
-public:
+  friend std::ostream& operator<< (std::ostream& stream, const PaSink& matrix);
 
   const std::string name, description;
   const uint32_t index;
@@ -30,6 +31,7 @@ public:
   const pa_volume_t volume;
   const pa_sink_state_t state;
   const uint32_t volume_steps;
+
 
 };
 

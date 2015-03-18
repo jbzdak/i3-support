@@ -28,7 +28,6 @@ void get_sinks_cb(pa_context *c, const pa_sink_info *l, int eol, void *userdata)
   std::tie(sink_list, ml) = *usrdata;
 
   sink_list->push_back(PaSink(
-    ml,
     *l
   ));
 
@@ -49,8 +48,7 @@ pa_operation * GetSinkListOp::execute_operation_internal(
   );
 }
 
-PaSink::PaSink(MainLoop* ml, const pa_sink_info &info):
-  ml(ml),
+PaSink::PaSink(const pa_sink_info &info):
   name(info.name),
   description(info.description),
   index(info.index),
@@ -59,4 +57,11 @@ PaSink::PaSink(MainLoop* ml, const pa_sink_info &info):
   state(info.state),
   volume_steps(info.n_volume_steps) {}
 
+std::ostream& operator<< (std::ostream& stream, const PaSink&sink){
+  stream << "Sink name: " << sink.name << ", description" << sink.description <<
+    ", index: " << sink.index << ", volume: " << sink.volume << ", state: " << sink.state <<
+    ", volume steps: " << sink.volume_steps;
+}
+
 }}
+

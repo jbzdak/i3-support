@@ -42,6 +42,8 @@ public:
 
   void wait_for_all_pending_operations();
 
+//  void change_
+
 private:
 
   const std::string context_name;

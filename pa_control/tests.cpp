@@ -2,6 +2,8 @@
 #define BOOST_TEST_MODULE ExampleTest
 #include <boost/test/unit_test.hpp>
 
+#include <iostream>
+
 #include "src/MainLoop.h"
 #include "src/GetSinkListOp.h"
 
@@ -49,6 +51,10 @@ BOOST_AUTO_TEST_CASE(TestGetSinkList) {
     ml.wait_for_all_pending_operations();
     auto sinks = sink_op->get_sink_list();
     BOOST_CHECK(sinks.size() > 0);
+
+    for (auto s: sinks){
+        std::cout << s << std::endl;
+    }
 
 }
 
