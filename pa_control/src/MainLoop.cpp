@@ -2,8 +2,10 @@
 // Created by jb on 3/15/15.
 //
 
+#include <stdint-gcc.h>
 #include "MainLoop.h"
 #include "PaOperation.h"
+#include "SetSinkMuteOp.h"
 #include "pa_errors.h"
 
 namespace jb {
@@ -122,6 +124,14 @@ void MainLoop::update_operations() {
 
 void MainLoop::wait_for_all_pending_operations() {
   wait_until_condition(this, [](MainLoop*ml){return ml->operations.empty();});
+}
+
+boost::optional<PaSink> MainLoop::mute_sink(uint32_t sink_index, bool muted, bool wait_for) {
+  this->schedule_operation(std::make_shared<SetSinkMuteOp>(sink_index, muted));
+  if (wait_for){
+    this->wait_for_all_pending_operations();
+  }
+  return boost::optional<PaSink>();
 }
 }
 }

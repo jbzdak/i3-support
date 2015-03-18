@@ -58,5 +58,12 @@ BOOST_AUTO_TEST_CASE(TestGetSinkList) {
 
 }
 
+BOOST_AUTO_TEST_CASE(TestMuteSink) {
+    jb::pa::MainLoop ml("foo");
+    ml.connect(true);
+    BOOST_CHECK(ml.get_context_state() == PA_CONTEXT_READY);
+    ml.mute_sink(1, false, true);
+
+}
 
 BOOST_AUTO_TEST_SUITE_END()

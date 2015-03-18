@@ -14,6 +14,7 @@
 
 #include "MainLoopDetail.hxx"
 #include "PaOperation.h"
+#include "PaSink.h"
 
 namespace jb {
 namespace pa {
@@ -42,7 +43,13 @@ public:
 
   void wait_for_all_pending_operations();
 
-//  void change_
+  boost::optional<PaSink> mute_sink(const PaSink& sink, bool muted, bool wait_for=false){
+    return this->mute_sink(sink.index, muted, wait_for);
+  }
+
+  boost::optional<PaSink> mute_sink(
+    uint32_t sink_index, bool muted, bool wait_for=false);
+
 
 private:
 

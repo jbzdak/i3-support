@@ -48,4 +48,10 @@ void PaOperation::set_state(OperationState state) {
     cb->operator()(this);
   }
 }
+
+void pa_success_callback (pa_context *c, int success, void *userdata){
+  PaOperation* operation = reinterpret_cast<PaOperation*>(userdata);
+  // TODO: There is no error checking here, probably should add it
+  operation->set_state(OperationState::DONE);
+}
 }}

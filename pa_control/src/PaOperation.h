@@ -11,6 +11,7 @@
 #include <boost/optional.hpp>
 
 #include "pa_errors.h"
+#include <iostream>
 
 
 namespace jb {
@@ -24,9 +25,15 @@ enum class OperationState {
   DONE
 };
 
+/*
+* This needs PaOperation to be passed as a userdata.
+*/
+void pa_success_callback (pa_context *c, int success, void *userdata);
+
 class PaOperation {
 public:
   friend class MainLoop;
+  friend void pa_success_callback(pa_context*, int, void*);
   virtual ~PaOperation();
   virtual void execute_operation(MainLoop* ml);
   virtual OperationState get_state() {return state;}
