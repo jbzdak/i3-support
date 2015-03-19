@@ -25,10 +25,12 @@ public:
 
 template<typename function, typename callback=NoopCallback>
 void wait_until_condition(MainLoop* ml, function condition, callback cb=NoopCallback()){
-  while(true){
-    ml->run_loop_iteration(true);
-    if(condition(ml)){
-      break;
+  if(!condition(ml)) {
+    while (true) {
+      ml->run_loop_iteration(false);
+      if (condition(ml)) {
+        break;
+      }
     }
   }
   cb(ml);
@@ -103,21 +105,18 @@ void MainLoop::set_contenxt_state(pa_context_state_t state){
   this->context_state = state;
 }
 
-void MainLoop::schedule_operation(std::shared_ptr<PaOperation> operation) {
-  PaOperation* ptr = operation.get();
+void MainLoop::schedule_operation(std::shared_ptr<IOperation> operation) {
   operations.insert(operation);
-  ptr->execute_operation(this);
-
+  operation->execute_operation(this);
 }
 
 void MainLoop::update_operations() {
-  auto idx = operations.begin();
-  while(idx != operations.end()){
-    PaOperation* op = idx->get();
-    op->ping_state();
-    auto old = idx++;
+  // Operations can be updated during the iteration
+  auto operations_copy = operations;
+  for (auto op : operations_copy){
+    op->ping_state(this);
     if(op->is_done()){
-      operations.erase(old);
+      operations.erase(op);
     }
   }
 }

@@ -15,21 +15,22 @@ class PaSink {
 private:
 
 public:
-
+  PaSink();
   PaSink(const pa_sink_info &info);
 
 public:
 
-  friend std::ostream &operator<<(std::ostream &stream, const PaSink &matrix);
+  friend std::ostream & operator<<(std::ostream &stream, const PaSink &matrix);
+  friend bool operator==(const PaSink&, const PaSink&);
 
-  const std::string name, description;
-  const uint32_t index;
-  const bool muted;
-  const pa_cvolume channel_volume;
+  std::string name, description;
+  uint32_t index;
+  bool muted;
+  pa_cvolume channel_volume;
 
-  const pa_volume_t volume;
-  const pa_sink_state_t state;
-  const uint32_t volume_steps;
+  pa_volume_t volume;
+  pa_sink_state_t state;
+  uint32_t volume_steps;
 
 
 };

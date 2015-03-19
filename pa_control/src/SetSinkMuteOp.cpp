@@ -16,5 +16,6 @@ pa_operation *jb::pa::SetSinkMuteOp::execute_operation_internal(pa_context *ctx,
 }
 
 jb::pa::SetSinkMuteOp::SetSinkMuteOp(uint32_t sink_index, bool muted):
+  PaOperation("mute sink"),
   sink_index(sink_index),
   muted(muted){}

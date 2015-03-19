@@ -48,5 +48,7 @@ pa_operation * GetSinkListOp::execute_operation_internal(
   );
 }
 
+GetSinkListOp::GetSinkListOp():
+  PaOperation("get sink list info"){}
 }}
 

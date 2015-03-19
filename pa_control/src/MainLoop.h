@@ -39,7 +39,7 @@ public:
 
   pa_context_state_t get_context_state(){return context_state;}
 
-  void schedule_operation(std::shared_ptr<PaOperation> operation);
+  void schedule_operation(std::shared_ptr<IOperation> operation);
 
   void wait_for_all_pending_operations();
 
@@ -58,7 +58,7 @@ private:
   const std::unique_ptr<pa_mainloop, MainLoopDetail::DeletePaMainLoop> pa_ml;
   pa_mainloop_api* pa_mlapi; // No need to free this one, as per PA docs
   const std::unique_ptr<pa_context, MainLoopDetail::DeletePaContext> pa_ctx;
-  std::set<std::shared_ptr<PaOperation>> operations;
+  std::set<std::shared_ptr<IOperation>> operations;
 
 private:
   friend void MainLoopDetail::main_loop_state_callback(pa_context *, void *);

@@ -17,7 +17,7 @@ namespace pa {
 
 class GetSinkListOp : public PaOperation{
 public:
-
+  GetSinkListOp();
   std::vector<PaSink> get_sink_list(){
     get_result_guard();
     return sink_list;

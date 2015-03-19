@@ -30,13 +30,14 @@ enum class OperationState {
 */
 void pa_success_callback (pa_context *c, int success, void *userdata);
 
-class PaOperation {
+class IOperation{
 public:
-  friend class MainLoop;
-  friend void pa_success_callback(pa_context*, int, void*);
-  virtual ~PaOperation();
-  virtual void execute_operation(MainLoop* ml);
+  IOperation(const std::string& name);
+  virtual ~IOperation()=default;
+  virtual void execute_operation(MainLoop* ml)=0;
   virtual OperationState get_state() {return state;}
+  virtual bool is_done() {return state == OperationState::DONE;}
+  virtual const std::string& get_name(){return name;}
 
   /**
   * We take ownership of pointed callback.
@@ -44,24 +45,51 @@ public:
   * Callbacks will be called whether state of this instance changes,
   * parameter to the callback will be PaOperation pointed by this pointer.
   */
-  void add_callback(std::unique_ptr<std::function<void(PaOperation*)>> cb);
+  virtual void add_callback(std::unique_ptr<std::function<void(IOperation*)>> cb);
 
-  bool is_done() {return state == OperationState::DONE;}
+protected:
+  friend class MainLoop;
+  friend void pa_success_callback(pa_context*, int, void*);
+  virtual void ping_state(MainLoop *ml)=0;
+  virtual void set_state(OperationState state);
+private:
+  const std::string name;
+  OperationState state = OperationState::UNSCHEDULED;
+  std::vector<std::unique_ptr<std::function<void(IOperation*)>>> callbacks;
+
+};
+
+class PaOperation : public IOperation{
+public:
+  PaOperation(const std::string& name);
+  virtual void execute_operation(MainLoop* ml);
+  virtual ~PaOperation();
 
 protected:
   virtual pa_operation *execute_operation_internal(pa_context *ctx, MainLoop* ml) = 0;
 
   void get_result_guard();
+  virtual void ping_state(MainLoop *ml);
 
 private:
-  OperationState state = OperationState::UNSCHEDULED;
   boost::optional<pa_operation*> internal_operation;
-  std::vector<std::unique_ptr<std::function<void(PaOperation*)>>> callbacks;
-  void ping_state();
-  void set_state(OperationState state);
 };
 
 
+class CompositeOperation: public IOperation{
+public:
+  CompositeOperation(std::string name);
+  virtual void execute_operation(MainLoop* ml);
+  virtual void ping_state(MainLoop *ml);
+
+  virtual ~CompositeOperation() = default;
+
+protected:
+  virtual std::shared_ptr<IOperation> get_next_operation(std::shared_ptr<IOperation> last)=0;
+
+private:
+  std::shared_ptr<IOperation> last;
+};
 }}
 
 

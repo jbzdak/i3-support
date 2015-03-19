@@ -9,23 +9,37 @@
 #include "PaSink.h"
 #include "MainLoop.h"
 
+#include <boost/variant.hpp>
+
 namespace jb {
 namespace pa {
 
+namespace GetSinkInfoDetail{
+
+void pa_sink_info_cb_t(
+  pa_context *c, const pa_sink_info *i, int eol, void *userdata);
+
+}
+
 
 class GetSinkInfo : public PaOperation {
+  friend void GetSinkInfoDetail::pa_sink_info_cb_t(pa_context *c, const pa_sink_info *i, int eol, void *userdata);
 public:
   GetSinkInfo(uint32_t sink_id);
+  GetSinkInfo(std::string sink_name);
+  GetSinkInfo(PaSink sink);
+
+  const PaSink& get_sink(){
+    get_result_guard();
+    return sink;
+  }
 
 protected:
   virtual pa_operation *execute_operation_internal(pa_context *ctx, MainLoop *ml);
 
-  GetSinkInfo(std::string sink_name);
-  GetSinkInfo(PaSink sink);
-
 private:
-  const boost::optional<uint32_t> sink_id;
-  const boost::optional<std::string> sink_name;
+  const boost::variant<uint32_t, std::string> sink_identifier;
+  PaSink sink;
 };
 
 }}
