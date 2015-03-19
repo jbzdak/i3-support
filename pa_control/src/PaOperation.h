@@ -42,7 +42,7 @@ public:
   * We take ownership of pointed callback.
   *
   * Callbacks will be called whether state of this instance changes,
-  * parameter to the callback will be this.
+  * parameter to the callback will be PaOperation pointed by this pointer.
   */
   void add_callback(std::unique_ptr<std::function<void(PaOperation*)>> cb);
 
