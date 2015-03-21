@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -lX11 -lpulse ")
 set(SOURCE_FILES
     src/MainLoop.cpp src/PaOperation.cpp
     src/GetSinkListOp.cpp  src/PaSink.cpp  src/SetSinkMuteOp.cpp
-    src/SetVolumeOp.cpp src/GetSinkInfo.cpp)
+    src/SetVolumeOp.cpp src/GetSinkInfo.cpp src/utils.cpp)
 
 ADD_LIBRARY(boost_unit_test_framework STATIC IMPORTED)
 SET_TARGET_PROPERTIES(boost_unit_test_framework PROPERTIES

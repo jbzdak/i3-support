@@ -8,7 +8,7 @@
 #include "src/GetSinkListOp.h"
 #include "src/GetSinkInfo.h"
 #include "src/SetVolumeOp.h"
-
+#include "src/utils.h"
 
 using namespace jb::pa;
 
@@ -136,7 +136,35 @@ BOOST_AUTO_TEST_CASE(TestMuteSink) {
 }
 
 
-BOOST_AUTO_TEST_CASE(TestDecreaseVolume) {
+//BOOST_AUTO_TEST_CASE(TestDecreaseVolume) {
+//    jb::pa::MainLoop ml("bar");
+//    ml.connect(true);
+//    BOOST_CHECK(ml.get_context_state() == PA_CONTEXT_READY);
+//    auto sinks = get_all_sinks(ml);
+//    for (auto s: sinks){
+//        if (s.state != PA_SINK_RUNNING){
+//            continue;
+//        }
+//        std::cout << s << std::endl;
+////        auto new_volume = s.channel_volume; // copy
+//        auto linear = pa_sw_volume_to_linear(s.volume);
+//        auto new_volume = pa_sw_volume_from_linear(linear*.9);
+//        auto volume_inc = s.volume - new_volume;
+//        pa_cvolume new_cvol = s.channel_volume;
+//        for(uint32_t ii=0; ii < new_cvol.channels; ii++){
+//            new_cvol.values[ii] = pa_sw_volume_from_linear(0.9);
+//        }
+//        auto op = std::make_shared<JustSetVolume>(s, new_cvol);
+//        ml.schedule_operation(op);
+//        ml.wait_for_all_pending_operations();
+////        auto new_sink = get_sink(ml, s.index);
+////        BOOST_CHECK(!!new_sink.muted != !!s.muted);
+////        ml.mute_sink(s.index, s.muted, true);
+////        BOOST_CHECK(s == get_sink(ml, s));
+//    }
+//}
+
+BOOST_AUTO_TEST_CASE(TestDecreaseVolume2) {
     jb::pa::MainLoop ml("bar");
     ml.connect(true);
     BOOST_CHECK(ml.get_context_state() == PA_CONTEXT_READY);
@@ -146,9 +174,10 @@ BOOST_AUTO_TEST_CASE(TestDecreaseVolume) {
             continue;
         }
         std::cout << s << std::endl;
-        auto new_volume = s.channel_volume; // copy
-//        pa_sw_cvolume_divide_scalar(&new_volume, &s.channel_volume, 2);
-        auto op = std::make_shared<JustSetVolume>(s, new_volume);
+//        auto new_volume = s.channel_volume; // copy
+
+        pa_cvolume new_cvol = scale_volumes(s.channel_volume, 0.9);
+        auto op = std::make_shared<JustSetVolume>(s, new_cvol);
         ml.schedule_operation(op);
         ml.wait_for_all_pending_operations();
 //        auto new_sink = get_sink(ml, s.index);
@@ -157,6 +186,5 @@ BOOST_AUTO_TEST_CASE(TestDecreaseVolume) {
 //        BOOST_CHECK(s == get_sink(ml, s));
     }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()
