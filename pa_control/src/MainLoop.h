@@ -21,26 +21,52 @@ namespace pa {
 
 class PaOperation;
 
+/**
+* This class encapsulates most of the interaction with pulse audio server.
+*/
 class MainLoop {
 
   friend class PaOperation;
 
 public:
 
+
   MainLoop(std::string context_name);
 
+  /**
+  * Connects to the server.
+  *
+  * wait_for_connection - if true function will block until connection is established
+  * (or there is conection error -- in which case exception will be raised).
+  * server - optional name passed to the server parameter of pa_context_connect.
+  * flags - context flafs
+  */
   void connect(
     bool wait_for_connection=false,
     boost::optional<std::string> server = boost::optional<std::string>(),
     pa_context_flags_t flags= PA_CONTEXT_NOFLAGS
   );
 
+  /**
+  * Runs single iteration of pulse audio main loop.
+  *
+  * block - if true this function will wait for events.
+  */
   void run_loop_iteration(bool block=false);
 
+  /**
+  * Returns context state it is refreshed on each call to run_loop_iteration
+  */
   pa_context_state_t get_context_state(){return context_state;}
 
+  /**
+  * Shedules operation execution
+  */
   void schedule_operation(std::shared_ptr<IOperation> operation);
 
+  /**
+  * Blocks until all pending operations are processed.
+  */
   void wait_for_all_pending_operations();
 
   boost::optional<PaSink> mute_sink(const PaSink& sink, bool muted, bool wait_for=false){

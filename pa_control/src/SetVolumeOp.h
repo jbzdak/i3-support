@@ -17,7 +17,6 @@ namespace pa {
 
 class JustSetVolume: public PaOperation{
 public:
-  JustSetVolume(const PaSink sink, const pa_volume_t desired_volume);
   JustSetVolume(const PaSink sink, const pa_cvolume desired_volume);
 
 
@@ -27,26 +26,6 @@ protected:
 private:
   const PaSink sink;
   const pa_cvolume new_volume;
-
-};
-
-class SetVolumeOp : public CompositeOperation{
-
-public:
-
-  SetVolumeOp(uint32_t sink_idx, pa_volume_t desired_volume);
-  SetVolumeOp(PaSink sink, pa_volume_t desired_volume);
-
-
-protected:
-  virtual std::shared_ptr<IOperation> get_next_operation(std::shared_ptr<IOperation> last) override;
-
-private:
-  const uint32_t sink_idx;
-  const boost::optional<PaSink> sink;
-  const pa_volume_t desired_volume;
-
-
 
 };
 

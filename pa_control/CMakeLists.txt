@@ -18,4 +18,6 @@ add_executable(pa-orig-example ${SOURCE_FILES} main.cpp)
 
 add_executable(pa-test ${SOURCE_FILES} tests.cpp)
 
+add_library(pa-bindings ${SOURCE_FILES})
+
 target_link_libraries(pa-test boost_unit_test_framework)

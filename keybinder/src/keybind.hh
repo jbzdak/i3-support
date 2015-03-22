@@ -41,6 +41,8 @@ public:
 
   void Bind(KeyPressInfo kpinfo, std::unique_ptr<Callback> cb);
 
+  void Bind(KeyPressInfo kpinfo, std::unique_ptr<std::function<void()>> cb);
+
   void ExitOn(KeyPressInfo kpinfo);
 
   void Run(bool async=false);

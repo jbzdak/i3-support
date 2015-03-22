@@ -34,7 +34,6 @@ class IOperation{
 public:
   IOperation(const std::string& name);
   virtual ~IOperation()=default;
-  virtual void execute_operation(MainLoop* ml)=0;
   virtual OperationState get_state() {return state;}
   virtual bool is_done() {return state == OperationState::DONE;}
   virtual const std::string& get_name(){return name;}
@@ -43,13 +42,14 @@ public:
   * We take ownership of pointed callback.
   *
   * Callbacks will be called whether state of this instance changes,
-  * parameter to the callback will be PaOperation pointed by this pointer.
+  * parameter to the callback will be PaOperation pointed by "this" pointer.
   */
   virtual void add_callback(std::unique_ptr<std::function<void(IOperation*)>> cb);
 
 protected:
   friend class MainLoop;
   friend void pa_success_callback(pa_context*, int, void*);
+  virtual void execute_operation(MainLoop* ml)=0;
   virtual void ping_state(MainLoop *ml)=0;
   virtual void set_state(OperationState state);
 private:
