@@ -17,17 +17,21 @@ namespace pa {
 
 class JustSetVolume: public PaOperation{
 public:
-  JustSetVolume(const PaSink sink, const pa_cvolume desired_volume);
+  JustSetVolume(uint32_t sink_index, const pa_cvolume desired_volume);
+  JustSetVolume(const PaSink& sink, const pa_cvolume desired_volume);
+  JustSetVolume(const PaSink& sink, double desired_volume_scale);
 
 
 protected:
   virtual pa_operation *execute_operation_internal(pa_context *ctx, MainLoop *ml) override;
 
 private:
-  const PaSink sink;
+  const uint32_t sink_index;
   const pa_cvolume new_volume;
 
 };
+
+
 
 }}
 

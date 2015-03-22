@@ -14,7 +14,7 @@ namespace pa {
 * This function scales volume, so each channel is linearly scaled by
 * new_volume.
 */
-pa_cvolume scale_volumes(pa_cvolume& original_vol, double new_volume);
+pa_cvolume scale_volumes(const pa_cvolume& original_vol, double new_volume);
 
 }}
 
